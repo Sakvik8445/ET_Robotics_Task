@@ -1,0 +1,46 @@
+<mujoco model="panda_wrapper">
+  <compiler angle="radian" meshdir="mujoco_menagerie/franka_emika_panda/assets" autolimits="true"/>
+  <option integrator="RK4" timestep="0.002" iterations="50"/>
+
+  <!-- include the Menagerie Panda model -->
+  <include file="mujoco_menagerie/franka_emika_panda/panda.xml"/>
+
+  <visual>
+    <map znear="0.01" zfar="50"/>
+  </visual>
+
+  <!-- gripper motor actuators (avoid position actuators to prevent nefc under-allocation) -->
+  <actuator>
+    <motor name="grip_left" joint="finger_joint1" gear="100"/>
+    <motor name="grip_right" joint="finger_joint2" gear="100"/>
+    <!-- arm actuators remain from included model -->
+  </actuator>
+
+  <worldbody>
+    <!-- unique light -->
+    <light name="scene_top" pos="0 0 2" dir="0 0 -1"/>
+
+    <!-- Ground plane -->
+    <geom name="ground" type="plane" pos="0 0 0" size="5 5 0.01" rgba="0.8 0.8 0.8 1" contype="0" conaffinity="0"/>
+
+    <!-- Table (static) -->
+    <body name="table" pos="0.6 0 0.0">
+      <geom name="table_top" type="box" pos="0 0 0.35" size="0.35 0.35 0.02" rgba="0.6 0.4 0.2 1"
+            contype="1" conaffinity="1" friction="1 0.1 0.1" mass="10"/>
+      <geom name="table_leg" type="box" pos="0 0 0.15" size="0.05 0.05 0.15" rgba="0.6 0.4 0.2 1"
+            contype="1" conaffinity="1" friction="1 0.1 0.1" mass="5"/>
+    </body>
+
+    <!-- Cup must be top-level to use free joint -->
+    <body name="cup" pos="0.6 0.0 0.38">
+      <joint type="free"/>
+      <geom name="cup_geom" type="cylinder" size="0.06 0.08" rgba="0.9 0.6 0.2 1"
+            contype="1" conaffinity="1" friction="1 0.1 0.1" mass="0.25"/>
+      <body name="cube" pos="0 0 0.04">
+        <geom name="cube_geom" type="box" size="0.03 0.03 0.03" rgba="0.1 0.3 0.9 1"
+              contype="1" conaffinity="1" friction="1 0.1 0.1"/>
+      </body>
+    </body>
+
+  </worldbody>
+</mujoco>
